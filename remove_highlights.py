@@ -1,13 +1,11 @@
-from fileinput import filename
-
-def remove_single_comment(string, key, change = {}):
+def remove_single_comment(string, key):
 
     key_word_length = len(key)
 
     index = string.find(key)
 
     if index == -1:
-        return string, change, index
+        return string, {}, index
     else:
         count = 0
         i = 0
@@ -36,13 +34,16 @@ def remove_single_comment(string, key, change = {}):
 
         return new_string, change, index
 
-def remove_comments(string, key):
+def remove_comments(string, keys):
     index = 0
     new_string = string
     changes = {}
-    while index != -1:
-        new_string, new_change, index = remove_single_comment(new_string, key, changes)
-        changes = changes | new_change
+
+    for key in keys:
+        while index != -1:
+            new_string, new_change, index = remove_single_comment(new_string, key)
+            changes = changes | new_change
+        index = 0
     return new_string, changes
 
 file_name = input("\nEnter file to be modified (you can just press enter if it's 'main.tex')\n")
@@ -51,23 +52,14 @@ if file_name == '':
 print(f'\nModifying {file_name}\n')
 
 initials = input("Enter initials to remove, separated by spaces:\n  E.g. ST RB HH\n\n").split()
+key_words = ["\\" + f'{initial}' for initial in initials]
 
 print('\n')
 
+with open(file_name, "r") as text_file:
+    text = text_file.read()
+    new_text, changes = remove_comments(text, key_words)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-print(list(
-    get_highlights("ST", "\ST{dasd}{ad} asd \HH{das}{vc}vc")
-))
+print('Changes are:\n\n')
+for old, new in changes.items():
+    print(old + '\t====>\t' + new)
