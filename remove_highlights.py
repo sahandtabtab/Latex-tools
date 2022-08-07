@@ -73,4 +73,4 @@ for old, new in changes.items():
 with open(file_name[:-4] + '_new' + '.tex', 'w') as new_file:
     new_file.write(new_text)
 
-print('\n\nDone.')
+input('\n\nDone. Press enter to exit.')
