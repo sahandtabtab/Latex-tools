@@ -1,3 +1,7 @@
+def split_after_title(text):
+    title_index = text.find('\\title')
+    return text[:title_index + 1], text[title_index + 1:] 
+
 def remove_single_comment(string, key):
 
     key_word_length = len(key)
@@ -36,7 +40,9 @@ def remove_single_comment(string, key):
 
 def remove_comments(string, keys):
     index = 0
-    new_string = string
+    split_string = split_after_title(string)
+    text_before_title = split_string[0]
+    new_string = split_string[1]
     changes = {}
 
     for key in keys:
@@ -44,7 +50,7 @@ def remove_comments(string, keys):
             new_string, new_change, index = remove_single_comment(new_string, key)
             changes = changes | new_change
         index = 0
-    return new_string, changes
+    return text_before_title + new_string, changes
 
 file_name = input("\nEnter file to be modified (you can just press enter if it's 'main.tex')\n")
 if file_name == '':
@@ -62,4 +68,9 @@ with open(file_name, "r") as text_file:
 
 print('Changes are:\n\n')
 for old, new in changes.items():
-    print(old + '\t====>\t' + new)
+    print(old + '\t====>\t' + new + '\n')
+
+with open(file_name[:-4] + '_new' + '.tex', 'w') as new_file:
+    new_file.write(new_text)
+
+print('\n\nDone.')
