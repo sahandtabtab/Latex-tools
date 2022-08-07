@@ -1,3 +1,7 @@
+from os.path import exists
+
+## Functions
+
 def split_after_title(text):
     title_index = text.find('\\title')
     return text[:title_index + 1], text[title_index + 1:] 
@@ -52,25 +56,43 @@ def remove_comments(string, keys):
         index = 0
     return text_before_title + new_string, changes
 
+
+
+## Import file
+
 file_name = input("\nEnter file to be modified (you can just press enter if it's 'main.tex')\n")
 if file_name == '':
     file_name = 'main.tex'
-print(f'\nModifying {file_name}\n')
 
-initials = input("Enter initials to remove, separated by spaces:\n  E.g. ST RB HH\n\n").split()
-key_words = ["\\" + f'{initial}' for initial in initials]
+# Check if file exists
+if exists(file_name):
 
-print('\n')
+    print(f'\nModifying {file_name}\n')
 
-with open(file_name, "r") as text_file:
-    text = text_file.read()
-    new_text, changes = remove_comments(text, key_words)
+    initials = input("Enter initials to remove, separated by spaces:\n  E.g. ST RB HH\n\n").split()
+    key_words = ["\\" + f'{initial}' for initial in initials]
 
-print('Changes are:\n\n')
-for old, new in changes.items():
-    print(old + '\t====>\t' + new + '\n')
+    print('\n')
 
-with open(file_name[:-4] + '_new' + '.tex', 'w') as new_file:
-    new_file.write(new_text)
+    # Find and remove highlights
 
-input('\n\nDone. Press enter to exit.')
+    with open(file_name, "r") as text_file:
+        text = text_file.read()
+        new_text, changes = remove_comments(text, key_words)
+
+    # Print changes
+
+    print('Changes are:\n\n')
+    for old, new in changes.items():
+        print(old + '\n====>\n' + new + '\n\n')
+
+    # Overwrite old text
+
+    with open(file_name, 'w') as file:
+        file.write(new_text)
+
+    input('\n\nDone. Press enter to close.')
+
+else:
+    
+    input(f'\n{file_name} does not exist. Press enter to close.\n')
