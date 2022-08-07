@@ -82,9 +82,16 @@ if exists(file_name):
 
     # Print changes
 
+    change_string = ''
     print('Changes are:\n\n')
     for old, new in changes.items():
-        print(old + '\n====>\n' + new + '\n\n')
+        change_string += old + '\n====>\n' + new + '\n\n'
+        print(change_string)
+
+    # Write change log
+
+    with open(file_name[:-4]+'_change_log.txt', 'w') as file:
+        file.write(change_string)
 
     # Overwrite old text
 
